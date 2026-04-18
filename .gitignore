@@ -1,0 +1,46 @@
+# ==========================================
+# CMake & Build Artifacts
+# ==========================================
+build/
+out/
+bin/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# ==========================================
+# Compiled Object Files & Executables
+# (In case you compile outside the build dir)
+# ==========================================
+*.o
+*.obj
+*.out
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+
+# ==========================================
+# VS Code / IDE Specific
+# ==========================================
+.vscode/
+*.swp
+*.swo
+
+# ==========================================
+# Profiling & Debugging
+# ==========================================
+core
+vgcore.*
+perf.data
+perf.data.old
+
+# ==========================================
+# OS Specific
+# ==========================================
+.DS_Store
+Thumbs.db
