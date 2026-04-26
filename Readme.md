@@ -1,5 +1,7 @@
 # N-Body Simulation Engine
 
+![Build Status](https://github.com/Bishesh-ops/nbody-sim/actions/workflows/cmake-ubuntu.yml/badge.svg)
+
 A highly optimized, multithreaded 2D gravitational physics engine written in modern C++20. 
 
 What started as a brute-force O(N^2) physics loop was refactored into a high-performance simulation capable of calculating gravitational interactions for tens of thousands of particles in real-time at 60 FPS. The visualizer uses SFML with additive blending and velocity-mapped vector trails to simulate fluid galactic mechanics and accretion disks.
