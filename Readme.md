@@ -36,7 +36,7 @@ This project uses CMake and requires SFML for the rendering engine.
 sudo apt update
 sudo apt install build-essential cmake libsfml-dev
 
-**Build and Run**
+// Build and Run
 git clone [https://github.com/Bishesh-ops/nbody-sim.git](https://github.com/Bishesh-ops/nbody-sim.git)
 cd nbody-sim
 mkdir build && cd build
