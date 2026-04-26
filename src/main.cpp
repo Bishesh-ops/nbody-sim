@@ -43,7 +43,7 @@ int main()
     nbody::ParticleSystem universe;
     nbody::QuadTree tree;
 
-    size_t particle_count = 3000;
+    size_t particle_count = 10000;
     init_galaxy(universe, particle_count, WIDTH, HEIGHT);
 
     sf::VertexArray vertices(sf::Points, particle_count);
