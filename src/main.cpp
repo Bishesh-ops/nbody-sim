@@ -2,6 +2,7 @@
 #include <random>
 #include <SFML/Graphics.hpp>
 #include "physics.hpp"
+#include "quadtree.hpp"
 
 void init_galaxy(nbody::ParticleSystem &p, size_t count, float width, float height)
 {

@@ -7,7 +7,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(nbody_sim src/main.cpp)
+add_executable(nbody_sim 
+    src/main.cpp
+    include/physics.hpp
+    include/quadtree.hpp
+)
 
 target_include_directories(nbody_sim PRIVATE include)
 
