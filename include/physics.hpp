@@ -35,12 +35,12 @@ namespace nbody
 
         size_t n = p.size();
 
-        for (size_t i = 0; i < n; i++)
+        for (size_t i = 0; i < n; ++i)
         {
             float ax = 0.0f;
             float ay = 0.0f;
 
-            for (size_t j = 0; j < n; j++)
+            for (size_t j = 0; j < n; ++j)
             {
                 if (i == j)
                     continue;
@@ -54,7 +54,19 @@ namespace nbody
                 float inv_dist3 = inv_dist * inv_dist * inv_dist;
 
                 float accel = G * p.mass[j] * inv_dist3;
+
+                ax += dx + accel;
+                ay += dy + accel;
             }
+
+            p.vx[i] += ax * dt;
+            p.vy[i] += ay * dt;
+        }
+
+        for (size_t i = 0; i < n; ++i)
+        {
+            p.x[i] += p.vx[i] * dt;
+            p.y[i] += p.vy[i] * dt;
         }
     }
 }
