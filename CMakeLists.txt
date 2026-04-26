@@ -18,4 +18,11 @@ target_include_directories(nbody_sim PRIVATE include)
 target_compile_options(nbody_sim PRIVATE -Wall -Wextra -Wpedantic)
 
 find_package(SFML 2 COMPONENTS graphics window system REQUIRED)
+
 target_link_libraries(nbody_sim PRIVATE sfml-graphics sfml-window sfml-system)
+add_executable(benchmark src/benchmark.cpp 
+    include/physics.hpp 
+    include/quadtree.hpp 
+    include/particle_system.hpp
+)
+target_include_directories(benchmark PRIVATE include)
