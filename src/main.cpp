@@ -18,7 +18,6 @@ void init_galaxy(nbody::ParticleSystem &p, size_t count, float width, float heig
 
     for (size_t i = 0; i < count; ++i)
     {
-
         float r = std::abs(dist_radius(gen));
         float angle = dist_angle(gen);
 
@@ -48,7 +47,7 @@ int main()
 
     sf::VertexArray vertices(sf::Points, particle_count);
 
-    float dt = 0.016f; // Time step
+    float dt = 0.016f;
 
     std::cout << "Starting Visual Simulation with " << particle_count << " particles.\n";
 
@@ -60,12 +59,24 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+
         nbody::step_simulation(universe, tree, dt);
+
+        float max_speed = 1500.0f;
 
         for (size_t i = 0; i < particle_count; ++i)
         {
             vertices[i].position = sf::Vector2f(universe.x[i], universe.y[i]);
-            vertices[i].color = sf::Color(200, 220, 255, 150);
+
+            float speed = std::sqrt(universe.vx[i] * universe.vx[i] + universe.vy[i] * universe.vy[i]);
+            float ratio = std::min(speed / max_speed, 1.0f);
+
+            sf::Uint8 r = static_cast<sf::Uint8>(30 + ratio * (255 - 30));
+            sf::Uint8 g = static_cast<sf::Uint8>(80 + ratio * (255 - 80));
+            sf::Uint8 b = static_cast<sf::Uint8>(255 + ratio * (200 - 255));
+            sf::Uint8 alpha = static_cast<sf::Uint8>(100 + ratio * 155);
+
+            vertices[i].color = sf::Color(r, g, b, alpha);
         }
 
         window.clear(sf::Color(10, 10, 15));
