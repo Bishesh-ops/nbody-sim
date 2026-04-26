@@ -1,20 +1,21 @@
 #pragma once
 #include <vector>
+#include <cmath>
+#include "particle_system.hpp"
 
 namespace nbody
 {
+
     struct QuadNode
     {
         float center_x, center_y;
         float size;
-        // com is for center of mass
         float com_x = 0.0f;
         float com_y = 0.0f;
         float total_mass = 0.0f;
-        // Tree Structure
-        int particle_idx = -1;              // -1 if this quad / square holds none or multiple particles
-        int children[4] = {-1, -1, -1, -1}; // Indices of the 4 sub quads (the children)
-        bool is_leaf = true;                // has no children
+        int particle_idx = -1;
+        int children[4] = {-1, -1, -1, -1};
+        bool is_leaf = true;
     };
 
     class QuadTree
@@ -41,11 +42,11 @@ namespace nbody
         int get_quadrant(float cx, float cy, float px, float py)
         {
             if (px <= cx && py <= cy)
-                return 0; // Top-Left
+                return 0;
             if (px > cx && py <= cy)
-                return 1; // Top-Right
+                return 1;
             if (px <= cx && py > cy)
-                return 2; // Bottom-Left
+                return 2;
             return 3;
         }
 
@@ -56,14 +57,13 @@ namespace nbody
             nodes[node_idx].com_x = (nodes[node_idx].com_x * nodes[node_idx].total_mass + p.x[p_idx] * p.mass[p_idx]) / new_mass;
             nodes[node_idx].com_y = (nodes[node_idx].com_y * nodes[node_idx].total_mass + p.y[p_idx] * p.mass[p_idx]) / new_mass;
             nodes[node_idx].total_mass = new_mass;
-            // Base Case for our Recursion (Cecking if it is a leaf and if it is empty)
+
             if (nodes[node_idx].is_leaf && nodes[node_idx].particle_idx == -1)
             {
                 nodes[node_idx].particle_idx = p_idx;
                 return;
             }
 
-            // Main Process of  dividing up a quad tree square if it has multiple residents
             if (nodes[node_idx].is_leaf)
             {
                 nodes[node_idx].is_leaf = false;
@@ -98,18 +98,32 @@ namespace nbody
 
             if (node.is_leaf && node.particle_idx == -1)
                 return;
+
             float dx = node.com_x - p.x[p_idx];
             float dy = node.com_y - p.y[p_idx];
             float dist_sqr = (dx * dx) + (dy * dy) + softening;
             float dist = std::sqrt(dist_sqr);
-            if (node.is_leaf && node.particle_idx == p_idx)
-                return;
-            float inv_dist = 1.0f / dist;
-            float inv_dist3 = inv_dist * inv_dist * inv_dist;
-            float accel = G * node.total_mass * inv_dist3;
 
-            ax += dx * accel;
-            ay += dy * accel;
+            if (node.is_leaf || (node.size / dist < theta))
+            {
+                if (node.is_leaf && node.particle_idx == p_idx)
+                    return;
+
+                float inv_dist = 1.0f / dist;
+                float inv_dist3 = inv_dist * inv_dist * inv_dist;
+                float accel = G * node.total_mass * inv_dist3;
+
+                ax += dx * accel;
+                ay += dy * accel;
+            }
+            else
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    calculate_force(node.children[i], p, p_idx, ax, ay, G, softening, theta);
+                }
+            }
         }
     };
+
 }

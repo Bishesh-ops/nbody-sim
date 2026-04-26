@@ -3,47 +3,51 @@
 #include <cstddef>
 #include <cmath>
 #include <thread>
-
+#include <algorithm>
+#include "particle_system.hpp"
+#include "quadtree.hpp"
 namespace nbody
 {
-    struct ParticleSystem
-    {
-        std::vector<float> x;
-        std::vector<float> y;
-        std::vector<float> vx;
-        std::vector<float> vy;
-        std::vector<float> mass;
-
-        void init(size_t num_particles)
-        {
-            x.resize(num_particles, 0.0f);
-            y.resize(num_particles, 0.0f);
-            vx.resize(num_particles, 0.0f);
-            vy.resize(num_particles, 0.0f);
-            mass.resize(num_particles, 1.0f);
-        }
-
-        size_t size() const
-        {
-            return x.size();
-        }
-    };
-
-    inline void step_simulation(ParticleSystem &p, float dt)
+    inline void step_simulation(ParticleSystem &p, QuadTree &tree, float dt)
     {
         const float G = 50000.0f;
         const float softening = 5000.0f;
         size_t n = p.size();
 
+        float min_x = p.x[0], max_x = p.x[0];
+        float min_y = p.y[0], max_y = p.y[0];
+        for (size_t i = 1; i < n; ++i)
+        {
+            if (p.x[i] < min_x)
+                min_x = p.x[i];
+            if (p.x[i] > max_x)
+                max_x = p.x[i];
+            if (p.y[i] < min_y)
+                min_y = p.y[i];
+            if (p.y[i] > max_y)
+                max_y = p.y[i];
+        }
+
+        float width = max_x - min_x;
+        float height = max_y - min_y;
+        float max_size = std::max(width, height) + 1.0f;
+        float center_x = min_x + width / 2.0f;
+        float center_y = min_y + height / 2.0f;
+
+        tree.reset();
+        int root = tree.create_node(center_x, center_y, max_size);
+        for (size_t i = 0; i < n; ++i)
+        {
+            tree.insert(root, i, p);
+        }
+
         unsigned int num_threads = std::thread::hardware_concurrency();
         if (num_threads == 0)
             num_threads = 4;
-
         size_t chunk_size = n / num_threads;
 
         {
             std::vector<std::jthread> threads;
-
             auto worker = [&](size_t start, size_t end)
             {
                 for (size_t i = start; i < end; ++i)
@@ -51,23 +55,7 @@ namespace nbody
                     float ax = 0.0f;
                     float ay = 0.0f;
 
-                    for (size_t j = 0; j < n; ++j)
-                    {
-                        if (i == j)
-                            continue;
-
-                        float dx = p.x[j] - p.x[i];
-                        float dy = p.y[j] - p.y[i];
-                        float dist_sqr = (dx * dx) + (dy * dy) + softening;
-
-                        float inv_dist = 1.0f / std::sqrt(dist_sqr);
-                        float inv_dist3 = inv_dist * inv_dist * inv_dist;
-
-                        float accel = G * p.mass[j] * inv_dist3;
-
-                        ax += dx * accel;
-                        ay += dy * accel;
-                    }
+                    tree.calculate_force(root, p, i, ax, ay, G, softening);
 
                     p.vx[i] += ax * dt;
                     p.vy[i] += ay * dt;

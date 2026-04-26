@@ -41,6 +41,7 @@ int main()
     window.setFramerateLimit(60);
 
     nbody::ParticleSystem universe;
+    nbody::QuadTree tree;
 
     size_t particle_count = 3000;
     init_galaxy(universe, particle_count, WIDTH, HEIGHT);
@@ -59,7 +60,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        nbody::step_simulation(universe, dt);
+        nbody::step_simulation(universe, tree, dt);
 
         for (size_t i = 0; i < particle_count; ++i)
         {
