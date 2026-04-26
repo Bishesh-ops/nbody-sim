@@ -31,7 +31,7 @@ void brute_force_step(nbody::ParticleSystem &p, float dt)
 
 int main()
 {
-    size_t particle_count = 10000;
+    size_t particle_count = 50000;
     float dt = 0.016f;
 
     nbody::ParticleSystem universe_a;

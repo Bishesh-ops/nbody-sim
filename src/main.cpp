@@ -49,7 +49,7 @@ int main()
     nbody::ParticleSystem universe;
     nbody::QuadTree tree;
 
-    size_t particle_count = 20000;
+    size_t particle_count = 25000;
     init_accretion_disk(universe, particle_count, WIDTH, HEIGHT);
 
     sf::VertexArray vertices(sf::Lines, particle_count * 2);
