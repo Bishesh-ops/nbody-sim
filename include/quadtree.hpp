@@ -88,5 +88,28 @@ namespace nbody
             int new_quad = get_quadrant(nodes[node_idx].center_x, nodes[node_idx].center_y, p.x[p_idx], p.y[p_idx]);
             insert(nodes[node_idx].children[new_quad], p_idx, p);
         }
+
+        void calculate_force(int node_idx, const ParticleSystem &p, int p_idx, float &ax, float &ay, float G, float softening, float theta = 0.5f) const
+        {
+            if (node_idx == -1)
+                return;
+
+            const QuadNode &node = nodes[node_idx];
+
+            if (node.is_leaf && node.particle_idx == -1)
+                return;
+            float dx = node.com_x - p.x[p_idx];
+            float dy = node.com_y - p.y[p_idx];
+            float dist_sqr = (dx * dx) + (dy * dy) + softening;
+            float dist = std::sqrt(dist_sqr);
+            if (node.is_leaf && node.particle_idx == p_idx)
+                return;
+            float inv_dist = 1.0f / dist;
+            float inv_dist3 = inv_dist * inv_dist * inv_dist;
+            float accel = G * node.total_mass * inv_dist3;
+
+            ax += dx * accel;
+            ay += dy * accel;
+        }
     };
 }
