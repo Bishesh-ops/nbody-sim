@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/bisheshshrestha/Desktop/nbody-sim/build",
-  "command": "/usr/bin/c++  -I/home/bisheshshrestha/Desktop/nbody-sim/include -std=c++20 -Wall -Wextra -Wpedantic -o CMakeFiles/nbody_sim.dir/src/main.cpp.o -c /home/bisheshshrestha/Desktop/nbody-sim/src/main.cpp",
-  "file": "/home/bisheshshrestha/Desktop/nbody-sim/src/main.cpp",
-  "output": "CMakeFiles/nbody_sim.dir/src/main.cpp.o"
-}
-]
